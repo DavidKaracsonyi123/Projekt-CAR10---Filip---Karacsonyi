@@ -8,8 +8,8 @@ Arbeitspaket 3:
 Code erstellen
 
 Arbeitspaket 4:
-Testen
+Testen der Motoren und Sensoren
 
 Arbeitspaket 5:
-Testen auf der Strecke
+Testfahrt auf der Strecke
 
