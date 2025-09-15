@@ -13,3 +13,6 @@ Testen der Motoren und Sensoren
 Arbeitspaket 5:
 Testfahrt auf der Strecke
 
+Arbeitspaket 6:
+Fehlersuche & Behebung
+
