@@ -7,6 +7,6 @@ Mitglieder:
 -David Karacsonyi  
 
 beinhaltet:
--Konzepte
--Arbeitspakete
--Pläne
+-Konzepte  
+-Arbeitspakete  
+-Pläne  
