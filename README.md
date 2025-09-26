@@ -6,7 +6,7 @@ Mitglieder:
 -Oskar Filip  
 -David Karacsonyi  
 
-beinhaltet:
+beinhaltet:  
 -Konzepte  
 -Arbeitspakete  
 -Pläne  
