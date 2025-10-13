@@ -19,3 +19,4 @@ Testfahrt auf der Strecke
 Arbeitspaket 7:  
 Fehlersuche & Behebung  
 
+![Steuerkonzepte](pictures/Steuerkonzepte.png)  

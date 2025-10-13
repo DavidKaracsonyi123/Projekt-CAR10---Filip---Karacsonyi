@@ -31,5 +31,3 @@ digitalWrite(in3, HIGH);
 digitalWrite(in4, HIGH);
 
 }
-
-![Zustandsdiagramm](pictures/zustandsdiagramm.jpeg)  

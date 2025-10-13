@@ -1,0 +1,2 @@
+![Verdrahtungsdiagramm](pictures/Verdrahtungsdiagramm.png)  
+
