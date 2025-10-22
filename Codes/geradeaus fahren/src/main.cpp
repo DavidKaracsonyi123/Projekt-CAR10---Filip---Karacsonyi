@@ -19,14 +19,14 @@ pinMode(in4, OUTPUT);
 }
 void loop()
 {
-digitalWrite(in1, LOW); // Motor 1 beginnt zu rotieren
+digitalWrite(in1, LOW); 
 digitalWrite(in2, HIGH);
-analogWrite(GSM1, 175); // rechts soll mit der Geschwindigkeit "200" (m
-digitalWrite(in3, HIGH); // Motor 2 beginnt zu rotieren
+analogWrite(GSM1, 175); 
+digitalWrite(in3, HIGH);
 digitalWrite(in4, LOW);
-analogWrite(GSM2, 200); // links 2 soll ebenfalls mit der Geschwindigkei
+analogWrite(GSM2, 200); 
 delay(2000);
-digitalWrite(in1, HIGH); // Durch die Veränderung von HIGH auf LOW (bzw.
+digitalWrite(in1, HIGH); 
 digitalWrite(in2, HIGH);
 digitalWrite(in3, HIGH);
 digitalWrite(in4, HIGH);
