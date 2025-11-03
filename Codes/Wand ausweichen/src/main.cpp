@@ -1,116 +1,97 @@
 #include <Arduino.h>
 
-// Pinbelegung der Sharp-Sensoren
-#define IR_SENSOR_MITTE  A0   // Sensor Mitte
-#define IR_SENSOR_LINKS  A1   // Sensor links
-#define IR_SENSOR_RECHTS A2   // Sensor rechts
-
-// Pinbelegung der Motoren
-int GSM1 = 10;  // Motor links
+// Motor Links
+int ML = 10;
 int in1 = 9;
 int in2 = 8;
-int GSM2 = 5;   // Motor rechts
+
+// Motor Rechts
+int MR = 5;
 int in3 = 7;
 int in4 = 6;
 
-// Messintervall
-const unsigned long measureInterval = 100; // alle 100 ms messen
-unsigned long lastMeasureTime = 0;
+// Sensor Pins
+int sensorMitte = A0;
+int sensorLinks = A1;
+int sensorRechts = A2;
 
-void setup() {
-  // PinMode für die Motoren setzen
-  pinMode(GSM1, OUTPUT);
-  pinMode(GSM2, OUTPUT);
+// Schwellenwert für Hindernis-Erkennung (angepasst je nach Bedarf)
+int schwellenwert = 200;  // Anpassen je nach den gemessenen ADC-Werten
+
+// Funktionsprototypen
+void geradeausFahren();
+void weicheNachLinks();
+void weicheNachRechts();
+
+void setup()
+{
+  // Pin-Modi setzen
+  pinMode(ML, OUTPUT);
+  pinMode(MR, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+  
+  // Sensor Pins setzen
+  pinMode(sensorMitte, INPUT);
+  pinMode(sensorLinks, INPUT);
+  pinMode(sensorRechts, INPUT);
 }
 
-void loop() {
-  unsigned long currentTime = millis();
+void loop()
+{
+  int wertMitte = analogRead(sensorMitte);  // Liest den Wert des Mittelsensors
+  int wertLinks = analogRead(sensorLinks);  // Liest den Wert des Linksensors
+  int wertRechts = analogRead(sensorRechts);  // Liest den Wert des Rechtsensors
 
-  if (currentTime - lastMeasureTime >= measureInterval) {
-    lastMeasureTime = currentTime;
-
-    // Messungen der Sensoren
-    uint16_t sensorMitte_raw  = analogRead(IR_SENSOR_MITTE);
-    uint16_t sensorLinks_raw  = analogRead(IR_SENSOR_LINKS);
-    uint16_t sensorRechts_raw = analogRead(IR_SENSOR_RECHTS);
-
-    uint16_t sensorMitte_new = (uint16_t)(15848 / (sensorMitte_raw + 11.2) - 10);
-    if (sensorMitte_new > 150) {
-      sensorMitte_new = 151;
-    } else if (sensorMitte_new < 20) {
-      sensorMitte_new = 19;
-    }
-
-    uint16_t sensorLinks_new = (uint16_t)(7968 / (sensorLinks_raw + 2.8) - 10);
-    if (sensorLinks_new > 80) {
-      sensorLinks_new = 81;
-    } else if (sensorLinks_new < 10) {
-      sensorLinks_new = 9;
-    }
-
-    uint16_t sensorRechts_new = (uint16_t)(8064 / (sensorRechts_raw + 9.4) - 10);
-    if (sensorRechts_new > 80) {
-      sensorRechts_new = 81;
-    } else if (sensorRechts_new < 10) {
-      sensorRechts_new = 9;
-    }
-
-    digitalWrite(in1, LOW); 
-    digitalWrite(in2, HIGH);
-    analogWrite(GSM1, 175); 
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-    analogWrite(GSM2, 200); 
-    delay(2000);
-    digitalWrite(in1, HIGH); 
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, HIGH);
-
-    // Wenn der Abstand rechts größer als 50 cm ist, dreht das Auto nach links
-    if (sensorRechts_new > 50) {
-      // Drehe nach links (Auto ausweichen) für nur kurze Zeit
-      digitalWrite(in1, LOW);
-      digitalWrite(in2, HIGH);
-      analogWrite(GSM1, 175); // Geschwindigkeit Motor 1
-      digitalWrite(in3, LOW); // Stoppe Motor 2
-      digitalWrite(in4, LOW);
-      analogWrite(GSM2, 0);
-      delay(300); // Kurze Zeit (300 ms) nach links lenken
-
-      // Setze die Motoren wieder auf Vorwärtsfahrt
-      digitalWrite(in1, LOW);
-      digitalWrite(in2, HIGH);
-      analogWrite(GSM1, 175           ); // Geschwindigkeit Motor 1
-      digitalWrite(in3, HIGH);
-      digitalWrite(in4, LOW);
-      analogWrite(GSM2, 200); // Geschwindigkeit Motor 2
-    }
-
-     if (sensorLinks_new > 50) {
-      // Drehe nach links (Auto ausweichen) für nur kurze Zeit
-      digitalWrite(in1, HIGH);
-      digitalWrite(in2, LOW);
-      analogWrite(GSM1, 0); // Geschwindigkeit Motor 1
-      digitalWrite(in3, HIGH); // Stoppe Motor 2
-      digitalWrite(in4, HIGH);
-      analogWrite(GSM2, 200);
-      delay(300); // Kurze Zeit (300 ms) nach links lenken
-
-      // Setze die Motoren wieder auf Vorwärtsfahrt
-      digitalWrite(in1, LOW);
-      digitalWrite(in2, HIGH);
-      analogWrite(GSM1, 175           ); // Geschwindigkeit Motor 1
-      digitalWrite(in3, HIGH);
-      digitalWrite(in4, LOW);
-      analogWrite(GSM2, 200); // Geschwindigkeit Motor 2
-    }
-
-   
-    
+  // Wenn beide, Mittel- und Rechtesensor, ein Hindernis erkennen, nach links ausweichen
+  if (wertMitte > schwellenwert && wertRechts > schwellenwert)
+  {
+    weicheNachLinks();
   }
+  // Wenn beide, Mittel- und Linksensor, ein Hindernis erkennen, nach rechts ausweichen
+  else if (wertMitte > schwellenwert && wertLinks > schwellenwert)
+  {
+    weicheNachRechts();
+  }
+  // Wenn kein Hindernis erkannt wird, geradeaus fahren
+  else
+  {
+    geradeausFahren();
+  }
+
+  delay(100);  // Kurze Verzögerung für stabile Sensorabfrage
+}
+
+void geradeausFahren()
+{
+  digitalWrite(in1, LOW); 
+  digitalWrite(in2, HIGH);
+  analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(MR, 200);  // Geschwindigkeit des rechten Motors
+}
+
+void weicheNachLinks()
+{
+  digitalWrite(in1, LOW); 
+  digitalWrite(in2, HIGH);
+  analogWrite(ML, 100);  // Verringert die Geschwindigkeit für den linken Motor
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(MR, 200);  // Normalgeschwindigkeit für den rechten Motor
+  delay(500);  // Für eine halbe Sekunde nach links ausweichen
+}
+
+void weicheNachRechts()
+{
+  digitalWrite(in1, LOW); 
+  digitalWrite(in2, HIGH);
+  analogWrite(ML, 200);  // Normalgeschwindigkeit für den linken Motor
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(MR, 100);  // Verringert die Geschwindigkeit für den rechten Motor
+  delay(500);  // Für eine halbe Sekunde nach rechts ausweichen
 }
