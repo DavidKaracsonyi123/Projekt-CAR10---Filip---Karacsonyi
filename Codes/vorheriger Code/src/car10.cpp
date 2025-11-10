@@ -1,11 +1,3 @@
-/**
- * Autonom Driving Car - CAR-10
- * Algorithm to navigate through the race track as fast as possible
- * (C) 2025 David Karacsonyi, Oskar Filip
- *
- *	file	car10.cpp
- */
-
 #include <Arduino.h>
 #include "car10.h"
 #include "ir_sensors.h"
@@ -67,15 +59,22 @@ void init_uart() {
   Serial.println("Serial started...");
 }
 
+// Zustände der State-Maschine
+enum State {
+  STATE_FORWARD,  // Fahren
+  STATE_STOP,     // Stoppen
+  STATE_TURN_LEFT, // Nach links drehen
+  STATE_TURN_RIGHT // Nach rechts drehen
+};
+
+State current_state = STATE_STOP;  // Initialer Zustand ist STOP
+
 void setup() {
   init_motors();
   init_uart();
 }
 
 void loop() {
-  static uint8_t state_new = DRIVE_FORWARD;
-  static uint8_t state = DRIVE_FORWARD;
-
   static unsigned long previous_millis_100ms = 0;
 
   // Zeitscheiben - alle 100ms ausführen
@@ -91,11 +90,46 @@ void loop() {
   // Sensorwerte alle 20ms lesen
   measure_ir_distances();
 
-  // Entscheidungslogik für das Ausweichen und Fahren
-  if (ir_sensor_front > 300 && ir_sensor_front < 400) {  // Wenn 40cm erkannt werden
-    // Die Erkennung für 40cm (mit ADC-Werten von ca. 300-400)
-    turn_right();  // Nach rechts abbiegen
-  } else {
-    drive_forward();  // Wenn kein Hindernis erkannt, geradeaus fahren
+  // State-Maschine: Zustandsübergänge basierend auf Sensorwerten
+  switch (current_state) {
+    case STATE_FORWARD:
+      // Zustand: Geradeaus fahren
+      if (ir_sensor_right < 200) {
+        // Wenn der rechte Sensor zu nah an der Wand ist
+        current_state = STATE_TURN_LEFT;  // Wechsel zu TURN_LEFT
+      } else if (ir_sensor_right > 400) {
+        // Wenn der rechte Sensor zu weit von der Wand entfernt ist
+        current_state = STATE_TURN_RIGHT;  // Wechsel zu TURN_RIGHT
+      } else {
+        // Fahren, wenn der Abstand ideal ist
+        drive_forward();
+      }
+      break;
+
+    case STATE_STOP:
+      // Zustand: Stoppen
+      stop_motors();
+      // Nach einer kurzen Zeit, wechseln wir zu STATE_FORWARD, um weiterzufahren
+      delay(1000);  // Hier wartet das Auto 1 Sekunde
+      current_state = STATE_FORWARD;  // Wechsel zu DRIVE_FORWARD
+      break;
+
+    case STATE_TURN_LEFT:
+      // Zustand: Nach links drehen
+      turn_left();
+      // Warten, bis der Abstand zur Wand korrigiert ist
+      if (ir_sensor_right > 200) {
+        current_state = STATE_FORWARD;  // Wechsel zurück zu DRIVE_FORWARD
+      }
+      break;
+
+    case STATE_TURN_RIGHT:
+      // Zustand: Nach rechts drehen
+      turn_right();
+      // Warten, bis der Abstand zur Wand korrigiert ist
+      if (ir_sensor_right < 400) {
+        current_state = STATE_FORWARD;  // Wechsel zurück zu DRIVE_FORWARD
+      }
+      break;
   }
 }
