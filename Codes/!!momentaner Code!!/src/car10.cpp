@@ -15,7 +15,7 @@ const int stoppin = 3;   // Stopp-Taster an D3
 bool fahren = false;  // Auto starten oder stoppen
 
 unsigned long lastMeasureTime = 0;
-const unsigned long measureInterval = 100; // alle 100 ms messen
+const unsigned long measureInterval = 80; // alle 80 ms messen
 
 // Motorsteuerungsfunktionen
 void motorSetup() {
@@ -48,12 +48,12 @@ void moveForward() {
 }
 
 void moveLeft() {
-  digitalWrite(in1, LOW);
+  digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
 
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
   analogWrite(MR, 200);  // Geschwindigkeit des rechten Motors
 }
 
@@ -63,9 +63,21 @@ void moveRight() {
   analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
 
   digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);
+  digitalWrite(in4, HIGH);
   analogWrite(MR, 150);  // Geschwindigkeit des rechten Motors
 }
+
+void moveBackwards() {
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
+
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  analogWrite(MR, 200);  // Geschwindigkeit des rechten Motors
+}
+
+
 
 // Start- und Stoppfunktionen
 void startCar() {
@@ -121,6 +133,9 @@ void loop() {
       }
       else if (sensorRechts_new > sensorMitte_new && sensorRechts_new > sensorLinks_new) {
         moveRight();  // Auto fährt nach rechts
+      }
+      else if(sensorRechts_new == sensorLinks_new && sensorMitte_new == sensorRechts_new) {
+        moveBackwards(); // Auto fährt rückwärts
       }
       else {
         stopMotors();  // Wenn keiner der Sensoren den höchsten Wert hat, stoppe das Auto
