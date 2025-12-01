@@ -40,7 +40,7 @@ void stopMotors() {
 void moveForward() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
-  analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
+  analogWrite(ML, 200);  // Geschwindigkeit des linken Motors
 
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
@@ -48,9 +48,9 @@ void moveForward() {
 }
 
 void moveLeft() {
-  digitalWrite(in1, HIGH);
+  digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
-  analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
+  analogWrite(ML, 200); // Geschwindigkeit des linken Motors
 
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
@@ -60,17 +60,17 @@ void moveLeft() {
 void moveRight() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
-  analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
+  analogWrite(ML, 200);  // Geschwindigkeit des linken Motors
 
   digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+  digitalWrite(in4, LOW);
   analogWrite(MR, 150);  // Geschwindigkeit des rechten Motors
 }
 
 void moveBackwards() {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
-  analogWrite(ML, 175);  // Geschwindigkeit des linken Motors
+  analogWrite(ML, 200);  // Geschwindigkeit des linken Motors
 
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
