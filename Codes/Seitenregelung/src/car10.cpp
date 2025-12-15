@@ -15,7 +15,7 @@ const int stoppin = 3;   // Stopp-Taster an D3
 bool fahren = false;  // Auto starten oder stoppen
 
 unsigned long lastMeasureTime = 0;
-const unsigned long measureInterval = 50; // alle 60 ms messen
+const unsigned long measureInterval = 50; // alle 50 ms messen
 
 // Motorsteuerungsfunktionen
 void motorSetup() {
@@ -47,44 +47,24 @@ void moveForward() {
   analogWrite(MR, 230);  // Geschwindigkeit des rechten Motors
 }
 
-void moveslow() {
+void moveLeft() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
-  analogWrite(ML, 150);  // Geschwindigkeit des linken Motors
+  analogWrite(ML, 160);  // Geschwindigkeit des linken Motors langsamer
 
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(MR, 150);  // Geschwindigkeit des rechten Motors
-}
-
-void moveLeft() {
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
-  analogWrite(ML, 60); // Geschwindigkeit des linken Motors
-
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
-  analogWrite(MR, 150);  // Geschwindigkeit des rechten Motors
+  analogWrite(MR, 200);  // Geschwindigkeit des rechten Motors etwas schneller
 }
 
 void moveRight() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
-  analogWrite(ML, 150);  // Geschwindigkeit des linken Motors
+  analogWrite(ML, 200);  // Geschwindigkeit des linken Motors etwas schneller
 
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
-  analogWrite(MR, 60);  // Geschwindigkeit des rechten Motors
-}
-
-void moveBackwards() {
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
-  analogWrite(ML, 200);  // Geschwindigkeit des linken Motors
-
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
-  analogWrite(MR, 200);  // Geschwindigkeit des rechten Motors
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  analogWrite(MR, 160);  // Geschwindigkeit des rechten Motors langsamer
 }
 
 // Start- und Stoppfunktionen
@@ -131,33 +111,18 @@ void loop() {
       int sensorLinks_new = readLinksSensor();
       int sensorRechts_new = readRechtsSensor();
 
-      if (sensorMitte_new > sensorLinks_new && sensorMitte_new > sensorRechts_new) {
-        moveForward();  // Auto fährt geradeaus
+      if (sensorRechts_new < 30) {
+        moveLeft(); 
       }
-      else if(sensorMitte_new <= 35) 
-      {
-        moveslow();
-      }
-      else if (sensorLinks_new > sensorMitte_new && sensorLinks_new > sensorRechts_new) {
-        moveLeft();  // Auto fährt nach links
-      }
-      else if (sensorRechts_new > sensorMitte_new && sensorRechts_new > sensorLinks_new) {
-        moveRight();  // Auto fährt nach rechts
-      }
-      else if(sensorRechts_new == sensorLinks_new)
-      {
-        moveLeft();
-      }
-      else if(sensorMitte_new < 20)
-      {
-        moveBackwards();
+      else if (sensorRechts_new > 30) {
+        moveRight();  
       }
       else {
-        stopMotors();  // Wenn keiner der Sensoren den höchsten Wert hat, stoppe das Auto
+        moveForward();  
       }
     }
   }
   else {
-    stopMotors();  // Auto stoppen
+    stopMotors(); 
   }
 }
