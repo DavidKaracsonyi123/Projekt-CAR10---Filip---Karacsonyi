@@ -22,7 +22,7 @@ int readMitteSensor() {
 
 int readLinksSensor() {
   int sensorLinks_raw = analogRead(IR_SENSOR_LINKS);
-  int sensorLinks_new = (int)(7968 / (sensorLinks_raw + 2.8) - 10);
+  int sensorLinks_new = (int)(8064 / (sensorLinks_raw + 9.4) - 10);
   if (sensorLinks_new > 80) sensorLinks_new = 81;
   else if (sensorLinks_new < 10) sensorLinks_new = 9;
   return sensorLinks_new;
