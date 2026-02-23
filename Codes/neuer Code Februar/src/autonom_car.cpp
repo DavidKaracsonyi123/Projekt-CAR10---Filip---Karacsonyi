@@ -206,7 +206,7 @@ void strategy_side_control_left_basic(void)
 void strategy_side_control_left_improved(void)
 {
   speed_left = MAX_SPEED - 30;
-  speed_right = speed_left - 28;
+  speed_right = speed_left;
 
   if (ir_sensor_left < 40)
   {
@@ -231,7 +231,32 @@ void strategy_side_control_left_improved(void)
 
 void strategy_pid_control(void)
 {
-  // TODO implement for 1
+  static const float Kp = 1.5;  // Proportional
+  static const float Ki = 0.05; // Integral
+  static const float Kd = 0.8;  // Derivativ
+
+  static int16_t last_error = 0;
+  static float integral = 0;
+
+  int16_t error = diff_left_right; 
+  integral += error;
+  if (integral > 100) integral = 100;
+  if (integral < -100) integral = -100;
+  int16_t derivative = error - last_error;
+  last_error = error;
+  float control_output = (Kp * error) + (Ki * integral) + (Kd * derivative);
+  uint8_t base_speed = MID_SPEED;
+  if (ir_sensor_front < 100) base_speed = MIN_SPEED + 20;
+  speed_left = add16(base_speed, -control_output);
+  speed_right = add16(base_speed, control_output);
+
+  if (ir_sensor_front < BACKWARD_THRESHOLD)
+  {
+    speed_left = STOP_SPEED;
+    speed_right = STOP_SPEED;
+    state_new = DRIVE_BACKWARD;
+    integral = 0;
+  }
 }
 
 // ========== State Machine Functions ==========

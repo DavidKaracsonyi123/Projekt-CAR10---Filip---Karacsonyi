@@ -42,15 +42,15 @@
 
 #define MAX_SPEED                 255
 #define MID_SPEED                 170
-#define LOW_SPEED                 80
-#define MIN_SPEED                 45   // speed where auto starts moving with help
+#define LOW_SPEED                 140
+#define MIN_SPEED                 120   // speed where auto starts moving with help
 #define STOP_SPEED                0
 
 #define SPEED_CONTROL_K           1.0 * (MAX_SPEED - LOW_SPEED) / (FORWARD_MAX_SPEED_THRESHOLD - BACKWARD_THRESHOLD) // 1.0 to ensure float
 #define SPEED_CONTROL_D           MAX_SPEED - (SPEED_CONTROL_K * FORWARD_MAX_SPEED_THRESHOLD)
 
 
-#define STRATEGY                  3    // MIDDLECONTROL = 0; SIDECONTROL RIGHT = 1, SIDECONTROL LEFT = 2, SIDECONTROL LEFT IMPROVED = 3, PID CONTROL = 4 
+#define STRATEGY                  4    // MIDDLECONTROL = 0; SIDECONTROL RIGHT = 1, SIDECONTROL LEFT = 2, SIDECONTROL LEFT IMPROVED = 3, PID CONTROL = 4 
 #define MIDDLECONTROL_FACTOR      4    // correction factor for middlecontrol in steering calculation (4 smooth correction ... )
 #define SIDE_DISTANCE             30   // distance to the side where the car should drive
 #define SIDECONTROL_FACTOR        0.8  // correction factor for sidecontrol in steering calculation (percentage)
