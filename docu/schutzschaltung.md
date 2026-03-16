@@ -1,4 +1,4 @@
-#Schutzschaltung gegen Tiefentladung#
+# Schutzschaltung gegen Tiefentladung
 
 Es wurde ein IRF9620 verwendet, dieser ist allerdings nicht in Multisim erhältlich, weshalb stattdessen ein IRF9540NL in der Schaltung zu sehen ist.
 
