@@ -231,9 +231,9 @@ void strategy_side_control_left_improved(void)
 
 void strategy_pid_control(void)
 {
-  static const float Kp = 1.5;  // Proportional
-  static const float Ki = 0.05; // Integral
-  static const float Kd = 0.8;  // Derivativ
+  static const float Kp = 1.0;  // Proportional
+  static const float Ki = 0.0; // Integral
+  static const float Kd = 0.0;  // Derivativ
 
   static int16_t last_error = 0;
   static float integral = 0;
